@@ -1,0 +1,25 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+poly = arr[0];
+
+mapping = new Map();
+arr.splice(1).forEach(function(row) {
+	mapping.set(row.split(" -> ")[0], row.split(" -> ")[1])
+})
+
+for (i=0; i<40; i++) {
+	console.log(i)
+	for (j=poly.length-1; j>0; j--) {
+		poly = poly.substring(0, j) + mapping.get(poly.substring(j-1, j+1)) + poly.substring(j);
+	}
+}
+
+counts = new Map();
+
+poly.split("").forEach(function(letter) {
+	if (!counts.get(letter)) {
+		counts.set(letter, 1);
+	} else {
+		counts.set(letter, counts.get(letter)+1);
+	}
+})

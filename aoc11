@@ -1,0 +1,38 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+arr = arr.map(function(row){return row.split("").map(function(i){return parseInt(i)})})
+count = 0;
+shined = [];
+increase = function(arr, x, y) {
+	if (x<0 || y<0 || x>=arr.length || y>=arr[0].length || shined.find(function(a){return a[0]==x && a[1]==y})) {
+		return;
+	}
+	arr[x][y]++;
+	if (arr[x][y]>9) {
+		count++;
+		arr[x][y]=0;
+		shined.push([x,y]);
+		increase(arr, x-1, y-1);
+		increase(arr, x-1, y);
+		increase(arr, x-1, y+1);
+		increase(arr, x, y-1);
+		increase(arr, x, y+1);
+		increase(arr, x+1, y-1);
+		increase(arr, x+1, y);
+		increase(arr, x+1, y+1);
+	}
+}
+for(step=0;step<1000;step++) {
+	shined = [];
+	arr.forEach(function(row, x) {
+		row.forEach(function(cell, y) {
+			increase(arr, x, y);
+		})
+	})
+	if (!arr.find(function(row) {
+		return row.find(function(cell){return cell !=0 })
+	})) {
+		console.log(step+1);
+		throw {}
+	}
+}
+count

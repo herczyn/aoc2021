@@ -1,0 +1,43 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+basins = [];
+var visited = []		
+
+arr.forEach(function(row, x){
+	row.split("").forEach(function(cell,y) {
+		if (x>0 && cell >= arr[x-1][y] || y>0 && cell >= arr[x][y-1] || 
+		x<99 && cell >= arr[x+1][y] || y<99 && cell >= arr[x][y+1]) {
+			return;
+		}
+		console.log("SEARCHING",x,y,cell )
+		basinSearch = function(a, b) {
+			if (visited.find(function(x){return x[0]==a && x[1]==b}) || arr[a][b]==9) {
+				return 0;
+			}
+			size = 1;
+			visited.push([a,b]);
+			if (a>0 && arr[a][b] <= arr[a-1][b]) {
+				size += basinSearch(a-1,b);
+			}
+			if (b>0 && arr[a][b] <= arr[a][b-1]) {
+				size += basinSearch(a,b-1);
+			}
+			if (a<99 && arr[a][b] <= arr[a+1][b]) {
+				size += basinSearch(a+1,b);
+			}
+			if (b<99 && arr[a][b] <= arr[a][b+1]) {
+				size += basinSearch(a,b+1);
+			}
+			return size;
+		}
+		basins.push(basinSearch(x,y));
+	});
+})
+	basins		
+
+	
+
+
+
+	On Thu, De
+Sure it's easier, I can read your mail, right?

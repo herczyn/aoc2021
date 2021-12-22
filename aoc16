@@ -1,0 +1,71 @@
+hex = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;})[0];
+arr = hex.split("").map(function(i){str='000' + parseInt(i, 16).toString(2);return str.substring(str.length-4)}).join("");
+
+var currentPosition = 0;
+var versionSum = 0;
+
+function read(start, len) {
+	str = '';
+	for (i=start;i<start+len;i++) {
+		str+=arr[i];
+	}
+	return parseInt(str, 2);
+}
+
+function readPacket() {
+	var packet = {}
+	packet.version = read(currentPosition, 3);
+	versionSum+=packet.version;
+	packet.type = read(currentPosition + 3, 3);
+	if (packet.type == 4) {
+		currentPosition += 6;
+		packet.val = 0;
+		//literal
+		while (true) {
+			packet.val = packet.val * 16 + read(currentPosition+1, 4);
+			currentPosition += 5;
+			if (arr[currentPosition-5] == '0') {
+				break;
+			}
+		}
+	} else {
+		//operator
+		if (arr[currentPosition + 6] == '0') {
+			currentPosition += 7;
+			var len = read(currentPosition, 15);
+			currentPosition += 15;
+			var endOfPacket = currentPosition + len;
+			packet.subpackets = [];
+			while (currentPosition < endOfPacket) {
+				packet.subpackets.push(readPacket());
+			}
+		} else {
+			currentPosition += 7;
+			var subPacketNumber = read(currentPosition, 11);
+			currentPosition += 11;
+			packet.subpackets = [];
+			while (packet.subpackets.length < subPacketNumber) {
+				packet.subpackets.push(readPacket());
+			}
+		}
+	}
+	return packet;
+}
+
+x=readPacket();
+
+function calculate(packet) {
+	console.log(packet);
+	switch (packet.type) {
+		case 0: return packet.subpackets.map(calculate).reduce(function(a,b){return a+b});
+		case 1: return packet.subpackets.map(calculate).reduce(function(a,b){return a*b});
+		case 2: return packet.subpackets.map(calculate).reduce(function(a,b){return Math.min(a,b)});
+		case 3: return packet.subpackets.map(calculate).reduce(function(a,b){return Math.max(a,b)});
+		case 4: return packet.val;
+		case 5: return (calculate(packet.subpackets[0]) > calculate(packet.subpackets[1])) ? 1 : 0;
+		case 6: return (calculate(packet.subpackets[0]) < calculate(packet.subpackets[1])) ? 1 : 0;
+		case 7: return (calculate(packet.subpackets[0]) ==calculate(packet.subpackets[1])) ? 1 : 0;
+	}
+}
+
+result=calculate(x);

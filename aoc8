@@ -1,0 +1,35 @@
+allowed = ["abcefg", "cf", "acdeg", "acdfg", "bcdf", "abdfg", "abdefg", "acf", "abcdefg", "abcdfg"];
+letters = "abcdefg";
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+permute = function(str, fun) {
+	if (!str) {
+		return fun(str);
+	}
+	str.split("").forEach(function(c) {
+		permute(str.replace(c, ""), function(sub) {fun(c + sub)});
+	});
+}
+
+arr.map(function(row) {
+	options = row.split(" | ")[0].split(" ");
+	digits  = row.split(" | ")[1].split(" ");
+	foundVersion = "";
+	permute(letters, function(version) {
+		if (!options.find(function(option) {
+			return allowed.indexOf(
+				option.split("").map(function(c) {return version[letters.indexOf(c)]}).sort(function(a,b){return letters.indexOf(a)-letters.indexOf(b)}).join(""))<0;
+		})) {
+			foundVersion = version;
+		}
+	});
+	return parseInt(digits.map(function(digit) {
+		return allowed.indexOf(
+				digit.split("").map(function(c) {return foundVersion[letters.indexOf(c)]}).sort(function(a,b){return letters.indexOf(a)-letters.indexOf(b)}).join(""));
+	}).join(""));
+}).reduce(function(a,b) {return a+b})
+
+
+
+
+

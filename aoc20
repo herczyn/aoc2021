@@ -1,0 +1,29 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+enhancer = arr[0];
+arr = arr.splice(1);
+
+arr = Array(60).fill(arr[0].replaceAll("#", ".")).concat(arr).concat(Array(60).fill(arr[0].replaceAll("#", "."))).map(function(row){return Array(60).fill(".").join("") + row + Array(60).fill(".").join("")})
+
+enhance = function(oldArr) {
+	infinite = oldArr[0][0] == "#" ? '.' : '#';
+	newArr = Array.from(oldArr);
+	newArr[0] = newArr[0].replaceAll(newArr[0][0], infinite);
+	for(i=1;i<oldArr.length-1;i++) {
+		row = infinite;
+		for(j=1;j<oldArr[0].length-1;j++) {
+			str = oldArr[i-1][j-1] + oldArr[i-1][j] + oldArr[i-1][j+1] + oldArr[i][j-1] + oldArr[i][j] + oldArr[i][j+1] + oldArr[i+1][j-1] + oldArr[i+1][j] + oldArr[i+1][j+1];
+			str = str.replaceAll('.', '0').replaceAll('#', '1')
+			row+=enhancer[parseInt(str, 2)];
+		}
+		row += infinite;
+		newArr[i] = row;
+	}
+	newArr[newArr.length - 1] = newArr[newArr.length - 1].replaceAll(newArr[newArr.length - 1][0], infinite);
+	return newArr;
+}
+
+for (x=0;x<50;x++) {
+	arr = enhance(arr)
+}
+
+arr.map(function(row){return row.split("").map(function(char){return char == '#' ? 1 : 0}).reduce(function(a,b){return a+b})}).reduce(function(a,b){return a+b})

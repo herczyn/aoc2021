@@ -1,0 +1,33 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+map = new Map();
+
+arr.forEach(function(conn) {
+	l = conn.split("-")[0]
+	r = conn.split("-")[1]
+	if (!map.get(l)) {
+		map.set(l, []);
+	}
+	if (!map.get(r)) {
+		map.set(r, []);
+	}
+	map.set(l, map.get(l).concat([r]))
+	map.set(r, map.get(r).concat([l]))
+})
+
+count = 0;
+
+dfs = function(current, path) {
+	if (current == 'end') {
+		count++;
+		return;
+	}
+	if (path.indexOf(current)>=0 && current.substring(0,1).toLowerCase() == current.substring(0,1) && (path.filter(function(a){return path.filter(function(b){return a == b}).length>1 && a.substring(0,1).toLowerCase() == a.substring(0,1)}).length>0 || current=='start' || current=='end')) {
+		return;
+	}
+	map.get(current).forEach(function(next) {
+		dfs(next, path.concat([current]));
+	});
+}
+
+dfs("start", []);

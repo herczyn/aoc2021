@@ -1,0 +1,59 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+ar = arr.map(function(row) {
+	stack = [];
+	for (i=0; i<row.length; i++) {
+		if (row[i] == '(' || row[i] == '[' || row[i] == '{' || row[i] == '<') {
+			stack.push(row[i]);
+		} else {
+			c = '';
+			p = 0;
+			if (row[i] == ')') {
+				c = '(';
+				p = 3;
+			}
+			if (row[i] == ']') {
+				c = '[';
+				p = 57;
+			}
+			if (row[i] == '}') {
+				c = '{';
+				p = 1197;
+			}
+			if (row[i] == '>') {
+				c = '<';
+				p = 25137;
+			}
+			if (c =='') {
+			 throw {};
+			}
+			if (stack == []) {
+				return 0;
+			}
+			s = stack.pop();
+			if (s!=c) {
+				return 0;
+			}
+		}
+	}
+	points = 0
+	while (c = stack.pop()) {
+		if (c == '(') {
+			p = 1;
+		}
+		if (c == '[') {
+			p = 2;
+		}
+		if (c == '{') {
+			p = 3;
+		}
+		if (c == '<') {
+			p = 4;
+		}
+		points = points*5 + p;
+	}
+	return points;
+}).filter(function(a){return a});
+ar.sort(function(a,b){return a-b})
+ar[(ar.length-1)/2]
+

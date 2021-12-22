@@ -1,0 +1,97 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+onCubes = [];
+
+sum = 0;
+
+printCube = function(cube){return cube.sx+".."+cube.ex+";"+cube.sy+".."+cube.ey+";"+cube.sz+".."+cube.ez};
+
+removeCube = function(cube) {
+	retryNeeded = true;
+	while (retryNeeded) {
+		retryNeeded = false;
+		newOnCubes = [];
+		onCubes.forEach(function(onCube) {
+			if (onCube.sx>cube.ex || onCube.ex<cube.sx) {
+				newOnCubes.push(onCube);
+			} else if (onCube.sy>cube.ey || onCube.ey<cube.sy) {
+				newOnCubes.push(onCube);
+			} else if (onCube.sz>cube.ez || onCube.ez<cube.sz) {
+				newOnCubes.push(onCube);
+			} else if (onCube.sx<cube.sx && onCube.ex>=cube.sx) {
+				l = {};
+				Object.assign(l, onCube)
+				r = {};
+				Object.assign(r, onCube)
+				l.ex=cube.sx-1
+				r.sx=cube.sx
+				newOnCubes.push(l, r)
+				retryNeeded = true
+			} else if (onCube.sx<=cube.ex && onCube.ex>cube.ex) {
+				l = {};
+				Object.assign(l, onCube)
+				r = {};
+				Object.assign(r, onCube)
+				l.ex=cube.ex
+				r.sx=cube.ex+1
+				newOnCubes.push(l, r)
+				retryNeeded = true
+			} else if (onCube.sy<cube.sy && onCube.ey>=cube.sy) {
+				l = {};
+				Object.assign(l, onCube)
+				r = {};
+				Object.assign(r, onCube)
+				l.ey=cube.sy-1
+				r.sy=cube.sy
+				newOnCubes.push(l, r)
+				retryNeeded = true
+			} else if (onCube.sy<=cube.ey && onCube.ey>cube.ey) {
+				l = {};
+				Object.assign(l, onCube)
+				r = {};
+				Object.assign(r, onCube)
+				l.ey=cube.ey
+				r.sy=cube.ey+1
+				newOnCubes.push(l, r)
+				retryNeeded = true
+			} else if (onCube.sz<cube.sz && onCube.ez>=cube.sz) {
+				l = {};
+				Object.assign(l, onCube)
+				r = {};
+				Object.assign(r, onCube)
+				l.ez=cube.sz-1
+				r.sz=cube.sz
+				newOnCubes.push(l, r)
+				retryNeeded = true
+			} else if (onCube.sz<=cube.ez && onCube.ez>cube.ez) {
+				l = {};
+				Object.assign(l, onCube)
+				r = {};
+				Object.assign(r, onCube)
+				l.ez=cube.ez
+				r.sz=cube.ez+1
+				newOnCubes.push(l, r)
+				retryNeeded = true
+			} else {
+				sum -= (onCube.ex - onCube.sx + 1) * (onCube.ey - onCube.sy + 1) * (onCube.ez - onCube.sz + 1);
+			}
+		})
+		onCubes = newOnCubes;
+	}
+}
+
+arr.forEach(function(row) {
+	cube = {}
+	cube.sx = parseInt(row.split(",")[0].split("=")[1].split("..")[0]);
+	cube.ex = parseInt(row.split(",")[0].split("=")[1].split("..")[1]);
+	cube.sy = parseInt(row.split(",")[1].split("=")[1].split("..")[0]);
+	cube.ey = parseInt(row.split(",")[1].split("=")[1].split("..")[1]);
+	cube.sz = parseInt(row.split(",")[2].split("=")[1].split("..")[0]);
+	cube.ez = parseInt(row.split(",")[2].split("=")[1].split("..")[1]);
+	removeCube(cube);
+	if (row.split(" ")[0] == "on") {
+		onCubes.push(cube)
+		sum += (cube.ex - cube.sx + 1) * (cube.ey - cube.sy + 1) * (cube.ez - cube.sz + 1);
+	}
+})
+sum

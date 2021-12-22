@@ -1,0 +1,30 @@
+pos1 = 6;
+pos2 = 7;
+score1 = 0;
+score2 = 0;
+
+nextDie=1;
+rolls = 0;
+
+roll = function() {
+	rolls++;
+	if (nextDie>100) {
+		nextDie-=100;
+	}
+	return nextDie++;
+}
+
+while (score1<1000 && score2<1000) {
+	pos1 += roll() + roll() + roll();
+	while (pos1>10) {
+		pos1-=10;
+	}
+	score1 += pos1;
+	if (score1<1000) {
+		pos2 += roll() + roll() + roll();
+		while (pos2>10) {
+			pos2-=10;
+		}
+		score2 += pos2;
+	}
+}

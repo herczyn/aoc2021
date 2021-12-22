@@ -1,0 +1,35 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+u = [];
+sum = 0;
+
+arr.splice(0, 20).forEach(function(row) {
+	sX = parseInt(row.split(",")[0].split("=")[1].split("..")[0]);
+	eX = parseInt(row.split(",")[0].split("=")[1].split("..")[1]);
+	sY = parseInt(row.split(",")[1].split("=")[1].split("..")[0]);
+	eY = parseInt(row.split(",")[1].split("=")[1].split("..")[1]);
+	sZ = parseInt(row.split(",")[2].split("=")[1].split("..")[0]);
+	eZ = parseInt(row.split(",")[2].split("=")[1].split("..")[1]);
+	n = row.split(" ")[0] == "on" ? 1 : 0;
+	console.log(sX, eX, sY, eY, sZ, eZ, n)
+	for(x=sX;x<=eX;x++) {
+		for(y=sY;y<=eY;y++) {
+			for(z=sZ;z<=eZ;z++) {
+				if (!u[x]) {
+					u[x]=[];
+				}
+				if (!u[x][y]) {
+					u[x][y]=[];
+				}
+				if (!u[x][y][z]) {
+					u[x][y][z] = 0;
+				}
+				if (u[x][y][z] != n) {
+					u[x][y][z] = n;
+					sum+=2*n-1;
+				}
+			}
+		}
+	}
+})
+sum

@@ -1,0 +1,37 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+incMap = function(map, key, count) {
+	if (!map.get(key)) {
+		map.set(key, count);
+	} else {
+		map.set(key, map.get(key)+count);
+	}
+}
+
+pairs = new Map();
+for (i=1; i<arr[0].length; i++) {
+	incMap(pairs, arr[0].substring(i-1, i+1), 1);
+}
+
+mapping = new Map();
+arr.splice(1).forEach(function(row) {
+	mapping.set(row.split(" -> ")[0], row.split(" -> ")[1])
+})
+
+for (i=0; i<40; i++) {
+	console.log(i)
+	newPairs = new Map();
+	pairs.forEach(function(count, pair) {
+		incMap(newPairs, pair[0] + mapping.get(pair), count);
+		incMap(newPairs, mapping.get(pair) + pair[1], count);
+	});
+	pairs = newPairs;
+}
+
+counts = new Map();
+
+pairs.forEach(function(count, pair) {
+	incMap(counts, pair[0], count);
+})
+
+incMap(counts, arr[0][arr[0].length-1], 1);

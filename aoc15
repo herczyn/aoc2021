@@ -1,0 +1,55 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;}).map(function(row){return row.split("").map(function(i){return parseInt(i)})});
+
+arrVal = function(x,y) {
+	val = arr[x%100][y%100];
+	val += Math.floor(x/100) + Math.floor(y/100);
+	if (val>9) {
+		val-=9;
+	}
+	return val;
+}
+
+MAX_INT=1000000;
+
+minRisk = [];
+for (i=0;i<500;i++) {
+	minRisk[i] = [];
+}
+minRisk[0][0] = 1;
+
+function addNew() {
+	currMinRisk = MAX_INT;
+	x=0;y=0;
+	for (i=0;i<500;i++) {
+		for (j=0;j<500;j++) {
+			if ((i!=0 || j!=0) && !minRisk[i][j]) {
+				if (i>0 && minRisk[i-1][j] && currMinRisk>minRisk[i-1][j]+arrVal(i,j)) {
+					currMinRisk=minRisk[i-1][j]+arrVal(i,j);
+					x=i;
+					y=j;
+				}
+				if (j>0 && minRisk[i][j-1] && currMinRisk>minRisk[i][j-1]+arrVal(i,j)) {
+					currMinRisk=minRisk[i][j-1]+arrVal(i,j);
+					x=i;
+					y=j;
+				}
+				if (i<499 && minRisk[i+1][j] && currMinRisk>minRisk[i+1][j]+arrVal(i,j)) {
+					currMinRisk=minRisk[i+1][j]+arrVal(i,j);
+					x=i;
+					y=j;
+				}
+				if (j<499 && minRisk[i][j+1] && currMinRisk>minRisk[i][j+1]+arrVal(i,j)) {
+					currMinRisk=minRisk[i][j+1]+arrVal(i,j);
+					x=i;
+					y=j;
+				}
+			}
+		}
+	}
+	minRisk[x][y]=currMinRisk;
+	console.log(x, y);
+}
+while(!minRisk[499][499]) {
+	addNew();
+}
+minRisk[499][499]-1

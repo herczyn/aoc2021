@@ -1,0 +1,111 @@
+arr = document.getElementsByTagName("pre")[0].innerText.split("\n").filter(function(n){return n;});
+
+print = function(snail) {
+	if (Array.isArray(snail)) {
+		return "[" + print(snail[0]) + "," + print(snail[1]) + "]";
+	}
+	return snail;
+}
+
+increaseLeft = function(s, amount) {
+	if (amount == 0) {
+		return s;
+	}
+	if (Array.isArray(s)) {
+		return [increaseLeft(s[0], amount), s[1]];
+	}
+	return s+amount;
+}
+
+increaseRight = function(s, amount) {
+	if (amount == 0) {
+		return s;
+	}
+	if (Array.isArray(s)) {
+		return [s[0], increaseRight(s[1], amount)];
+	}
+	return s+amount;
+}
+
+explode = function(snail, depth) {
+	if (depth<3 && Array.isArray(snail)) {
+		left = explode(snail[0], depth+1);
+		if (left[1]) {
+			return [[left[0], increaseLeft(snail[1], left[3])], left[1], left[2], 0];
+		}
+		right = explode(snail[1], depth+1);
+		if (right[1]) {
+			return [[increaseRight(snail[0], right[2]), right[0]], right[1], 0, right[3]];
+		}
+		return [snail, false];
+	}
+	if (depth==3 && Array.isArray(snail)) {
+		if (Array.isArray(snail[0])) {
+			return [[0, increaseLeft(snail[1], snail[0][1])], true, snail[0][0], 0];
+		}
+		if (Array.isArray(snail[1])) {
+			return [[increaseRight(snail[0], snail[1][0]), 0], true, 0, snail[1][1]];
+		}
+	}
+	return [snail, false]
+}
+
+split = function(snail) {
+	if (Array.isArray(snail)) {
+		left = split(snail[0]);
+		if (left[1]) {
+			return [[left[0], snail[1]], true];
+		}
+		right = split(snail[1]);
+		if (right[1]) {
+			return [[snail[0], right[0]], true];
+		}
+		return [snail, false];
+	}
+	if (snail > 9) {
+		return [[Math.floor(snail/2), Math.ceil(snail/2)], true]
+	}
+	return [snail, false];
+}
+
+add = function(snail1, snail2) {
+	snail = [snail1, snail2];
+	while (true) {
+		explodeResult = explode(snail, 0);
+		if (explodeResult[1]) {
+			snail = explodeResult[0];
+		} else {
+			splitResult = split(snail);
+			if (splitResult[1]) {
+				snail = splitResult[0];
+			} else {
+				break;
+			}
+		}
+	}
+	return snail;
+}
+//snail = eval(arr[0]);
+//for (i=1; i<arr.length; i++) {
+//	snail = add(snail, eval(arr[i]));
+//}
+
+magnitude = function(snail) {
+	if (Array.isArray(snail)) {
+		return magnitude(snail[0]) * 3 + magnitude(snail[1]) * 2;
+	}
+	return snail;
+}
+maxMag = 0;
+for (i=0; i<arr.length; i++) {
+	for(j=0; j<arr.length; j++) {
+		if (i!=j) {
+			snail = add(eval(arr[i]), eval(arr[j]));
+			mag = magnitude(snail);
+			if (mag > maxMag) {
+				maxMag = mag;
+			}
+		}
+	}
+}
+maxMag
